@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sky: Children of the Light Gate
+* source:	https://sketchfab.com/3d-models/sky-children-of-the-light-gate-12e72b51c0f54384b5da03aa5e05f577
+* author:	Shady (https://sketchfab.com/ShadierShady)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sky: Children of the Light Gate" (https://sketchfab.com/3d-models/sky-children-of-the-light-gate-12e72b51c0f54384b5da03aa5e05f577) by Shady (https://sketchfab.com/ShadierShady) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

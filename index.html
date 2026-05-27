@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon's World</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- 第一屏：开始页 -->
+  <div id="start-screen">
+    <div class="stars"></div>
+    <div class="welcome-container">
+      <p class="subtitle">— enter the world —</p>
+      <h1 class="welcome-text" id="welcomeBtn">Welcome to Moon's World</h1>
+      <p class="subtitle">— click to begin —</p>
+    </div>
+  </div>
+
+  <!-- 第二屏：视频 -->
+  <div id="video-screen">
+    <video id="introVideo" playsinline>
+      <source src="素材/入场动画.MOV" type="video/mp4">
+    </video>
+    <!-- 点击热区（视频结束后出现） -->
+    <div id="hotspot" title="进入">
+      <div class="hotspot-ring"></div>
+      <div class="hotspot-ring ring2"></div>
+    </div>
+  </div>
+
+  <!-- 过渡光晕 -->
+  <div id="transition-overlay"></div>
+
+  <script src="index.js"></script>
+</body>
+</html>

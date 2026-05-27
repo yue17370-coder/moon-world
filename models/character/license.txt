@@ -1,0 +1,11 @@
+Model Information:
+* title:	Skykid - Sky Children of the Light 1.3
+* source:	https://sketchfab.com/3d-models/skykid-sky-children-of-the-light-13-bb51466cee374de59f47e319b1c84341
+* author:	Unity (https://sketchfab.com/unityxz)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Skykid - Sky Children of the Light 1.3" (https://sketchfab.com/3d-models/skykid-sky-children-of-the-light-13-bb51466cee374de59f47e319b1c84341) by Unity (https://sketchfab.com/unityxz) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

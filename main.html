@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon's World</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #87CEEB; }
+
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 100;
+      background: #0a0e1a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 1s ease;
+    }
+    #loading-screen h2 {
+      font-family: 'Cinzel Decorative', serif;
+      color: rgba(255,220,120,0.9); font-size: 1.2rem;
+      letter-spacing: 0.2em; margin-bottom: 1.5rem;
+      text-shadow: 0 0 20px rgba(255,200,80,0.5);
+    }
+    .loading-bar-wrap {
+      width: 200px; height: 2px;
+      background: rgba(255,220,120,0.2); border-radius: 2px; overflow: hidden;
+    }
+    .loading-bar {
+      height: 100%; background: rgba(255,220,120,0.8);
+      width: 0%; transition: width 0.3s ease;
+      box-shadow: 0 0 8px rgba(255,200,80,0.8);
+    }
+
+    #canvas-container { position: fixed; inset: 0; z-index: 1; }
+
+    #character-sprite {
+      position: fixed; z-index: 10;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      image-rendering: auto;
+      mix-blend-mode: normal;
+      width: 150px; height: auto;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
+      opacity: 1;
+    }
+
+    #char-label {
+      position: fixed; z-index: 11;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.85rem; color: #fff;
+      letter-spacing: 0.2em;
+      text-shadow: 0 0 10px rgba(255,220,120,0.9), 0 0 25px rgba(255,200,80,0.5);
+      white-space: nowrap;
+    }
+
+    .gate-label {
+      position: fixed; z-index: 11;
+      pointer-events: auto;
+      transform: translate(-50%, -100%);
+      display: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      color: rgba(255,220,120,0.95);
+      letter-spacing: 0.15em;
+      text-shadow: 0 0 10px rgba(255,200,80,0.8);
+      background: rgba(0,0,0,0.45);
+      padding: 4px 14px; border-radius: 20px;
+      border: 1px solid rgba(255,220,120,0.3);
+      white-space: nowrap;
+    }
+
+    #label-cotl {
+      position: fixed; z-index: 11;
+      pointer-events: auto;
+      transform: translate(-50%, -50%);
+      display: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      color: rgba(255,220,120,0.95);
+      letter-spacing: 0.15em;
+      text-shadow: 0 0 10px rgba(255,200,80,0.8);
+      background: rgba(0,0,0,0.45);
+      padding: 4px 14px; border-radius: 20px;
+      border: 1px solid rgba(255,220,120,0.3);
+      white-space: nowrap;
+    }
+
+    #hint {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%); z-index: 15;
+      color: rgba(255,220,120,0.6); font-family: 'Cinzel', serif;
+      font-size: 0.72rem; letter-spacing: 0.2em;
+      pointer-events: none;
+      animation: hint-fade 3s ease-in-out infinite;
+    }
+    @keyframes hint-fade { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
+
+    /* 联系我弹窗 */
+    #contact-panel {
+      position: fixed; z-index: 50;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      pointer-events: auto;
+    }
+    #contact-panel.active { display: flex; }
+    .contact-inner {
+      background: rgba(8,12,30,0.88);
+      border: 1px solid rgba(255,220,120,0.35);
+      border-radius: 20px; padding: 1rem 1.5rem;
+      text-align: center; position: relative;
+      box-shadow: 0 0 40px rgba(255,200,80,0.15);
+      min-width: 200px;
+    }
+    .contact-inner h2 {
+      font-family: 'Cinzel Decorative', serif;
+      color: rgba(255,220,120,0.9); font-size: 0.9rem;
+      margin-bottom: 0.2rem;
+      text-shadow: 0 0 15px rgba(255,200,80,0.5);
+    }
+    .contact-inner p {
+      color: rgba(255,255,255,0.55); font-size: 0.7rem;
+      margin-bottom: 0.8rem; font-family: sans-serif;
+    }
+    .qr-placeholder {
+      width: 110px; height: 110px; margin: 0 auto;
+      border: 2px dashed rgba(255,220,120,0.3); border-radius: 8px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.35); font-size: 0.7rem;
+      font-family: sans-serif; gap: 8px;
+    }
+    .close-btn {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: 1px solid rgba(255,220,120,0.3);
+      color: rgba(255,220,120,0.7);
+      width: 28px; height: 28px; border-radius: 50%;
+      cursor: pointer; font-size: 0.75rem; transition: all 0.2s;
+    }
+    .close-btn:hover { background: rgba(255,220,120,0.1); color: rgba(255,220,120,1); }
+    #contact-panel h2 { display: none; }
+    #contact-panel p { display: none; }
+
+    /* 技能面板 */
+    #skills-panel {
+      position: fixed; inset: 0; z-index: 50;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+    }
+    #skills-panel.active { display: flex; }
+    .skills-inner {
+      background: rgba(8,12,30,0.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,220,120,0.35);
+      border-radius: 20px; padding: 2rem 2.5rem;
+      position: relative;
+      box-shadow: 0 0 40px rgba(255,200,80,0.15);
+      min-width: 420px; max-width: 90vw;
+    }
+    .skills-inner::before {
+      content: '';
+      position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,220,120,0.5), transparent);
+    }
+    .skills-title {
+      font-family: 'Cinzel Decorative', serif;
+      color: rgba(255,220,120,0.9); font-size: 1.2rem;
+      text-align: center; margin-bottom: 0.4rem;
+      text-shadow: 0 0 15px rgba(255,200,80,0.5);
+    }
+    .skills-divider {
+      width: 50px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,220,120,0.5), transparent);
+      margin: 0 auto 1.5rem;
+    }
+    .skills-category {
+      font-size: 0.65rem; color: rgba(255,220,120,0.5);
+      letter-spacing: 0.3em; margin-bottom: 0.8rem;
+    }
+    .skills-grid {
+      display: flex; flex-wrap: wrap; gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .skill-item {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.4rem;
+      padding: 0.7rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; width: 70px;
+    }
+    .skill-item span { font-size: 1.8rem; }
+    .skill-item p {
+      font-family: sans-serif; font-size: 0.6rem;
+      color: rgba(255,255,255,0.55); text-align: center;
+    }
+    .skill-link {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.4rem;
+      padding: 0.7rem;
+      background: rgba(255,220,120,0.05);
+      border: 1px solid rgba(255,220,120,0.2);
+      border-radius: 12px; width: 70px;
+      text-decoration: none; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .skill-link:hover {
+      background: rgba(255,220,120,0.12);
+      border-color: rgba(255,220,120,0.5);
+    }
+    .skill-link span { font-size: 1.8rem; }
+    .skill-link p {
+      font-family: sans-serif; font-size: 0.6rem;
+      color: rgba(255,220,120,0.7); text-align: center;
+    }
+    .skill-link small {
+      font-size: 0.5rem; color: rgba(255,220,120,0.4);
+    }
+
+    #transition-overlay {
+      position: fixed; inset: 0; z-index: 80;
+      background: #fff; opacity: 0; pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    #transition-overlay.active { opacity: 1; pointer-events: all; }
+  </style>
+</head>
+<body>
+
+  <div id="loading-screen">
+    <h2>Loading Moon's World</h2>
+    <div class="loading-bar-wrap">
+      <div class="loading-bar" id="loading-bar"></div>
+    </div>
+  </div>
+
+  <div id="canvas-container"></div>
+  <img id="character-sprite" src="待机序列帧/ezgif-frame-001.png" alt="">
+
+  <div id="char-label">月亮</div>
+  <div class="gate-label" id="label-0">关于我</div>
+  <div class="gate-label" id="label-1">我的作品</div>
+  <div class="gate-label" id="label-2">我的技能</div>
+  <div class="gate-label" id="label-cotl">联系我</div>
+
+  <div id="hint">← A / D → 移动角色 · 走近目标进入</div>
+
+  <!-- 联系我面板 -->
+  <div id="contact-panel">
+    <div class="contact-inner">
+      <button class="close-btn" id="closeContact">✕</button>
+      <h2>联系我</h2>
+      <p>扫描下方二维码添加微信</p>
+      <div class="qr-placeholder">
+        <img src="素材/wechat_qr.png" alt="微信二维码" style="width:100%;height:100%;object-fit:contain;border-radius:6px;" />
+      </div>
+    </div>
+  </div>
+
+  <!-- 技能面板 -->
+  <div id="skills-panel">
+    <div class="skills-inner">
+      <button class="close-btn" id="closeSkills">✕</button>
+      <h2 class="skills-title">我的技能</h2>
+      <div class="skills-divider"></div>
+
+      <p class="skills-category">AI 工具</p>
+      <div class="skills-grid">
+        <div class="skill-item"><span>🖱️</span><p>Cursor</p></div>
+        <div class="skill-item"><span>🤖</span><p>Trae</p></div>
+        <div class="skill-item"><span>💬</span><p>ChatGPT</p></div>
+        <div class="skill-item"><span>✨</span><p>Claude</p></div>
+        <div class="skill-item"><span>💻</span><p>VSCode</p></div>
+      </div>
+
+      <p class="skills-category">办公软件</p>
+      <div class="skills-grid">
+        <div class="skill-item"><span>📝</span><p>Word</p></div>
+        <div class="skill-item"><span>📊</span><p>Excel</p></div>
+        <div class="skill-item"><span>📑</span><p>PPT</p></div>
+        <a class="skill-link" href="https://dcn5einvu7ur.feishu.cn/wiki/ZHuiwL831ifnJkk8Tv0cwauinWc?from=from_copylink" target="_blank">
+          <span>📚</span><p>飞书笔记</p><small>↗ 查看</small>
+        </a>
+      </div>
+
+      <p class="skills-category">其他</p>
+      <div class="skills-grid">
+        <a class="skill-link" href="https://v.douyin.com/CRWipx3vCgE/" target="_blank">
+          <span>🎵</span><p>抖音</p><small>↗ 主页</small>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="transition-overlay"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const container = document.getElementById('canvas-container');
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.3;
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const skyCanvas = document.createElement('canvas');
+    skyCanvas.width = 2; skyCanvas.height = 512;
+    const skyCtx = skyCanvas.getContext('2d');
+    const grad = skyCtx.createLinearGradient(0, 0, 0, 512);
+    grad.addColorStop(0,   '#4a90d9');
+    grad.addColorStop(0.4, '#87CEEB');
+    grad.addColorStop(0.7, '#c9e8f5');
+    grad.addColorStop(1,   '#e8f4fd');
+    skyCtx.fillStyle = grad;
+    skyCtx.fillRect(0, 0, 2, 512);
+    scene.background = new THREE.CanvasTexture(skyCanvas);
+    scene.fog = new THREE.FogExp2(0xc9e8f5, 0.018);
+
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera.position.set(0, 4, 12);
+    camera.lookAt(0, 1, 0);
+
+    scene.add(new THREE.AmbientLight(0xfff5e0, 1.5));
+    const sun = new THREE.DirectionalLight(0xffe8b0, 2.5);
+    sun.position.set(8, 15, 8); sun.castShadow = true;
+    scene.add(sun);
+    const fill = new THREE.DirectionalLight(0xb0d8ff, 0.8);
+    fill.position.set(-8, 5, -5);
+    scene.add(fill);
+
+    const loadingBar = document.getElementById('loading-bar');
+    const loadingScreen = document.getElementById('loading-screen');
+    let loaded = 0;
+    const total = 3;
+    function onLoaded() {
+      loaded++;
+      loadingBar.style.width = (loaded / total * 100) + '%';
+      if (loaded >= total) {
+        setTimeout(() => {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => loadingScreen.style.display = 'none', 1000);
+        }, 400);
+      }
+    }
+
+    const loader = new GLTFLoader();
+
+    loader.load('models/landscape/scene.gltf', (gltf) => {
+      const land = gltf.scene;
+      land.scale.set(4, 4, 4);
+      land.position.set(0, -1, 0);
+      land.traverse(c => {
+        if (c.isMesh) {
+          c.receiveShadow = true; c.castShadow = true;
+          const name = (c.name || '').toLowerCase();
+          if (name.includes('tree') || name.includes('leaf') ||
+              name.includes('trunk') || name.includes('branch') ||
+              name.includes('rock') || name.includes('stone') ||
+              name.includes('boulder') || name.includes('cliff') ||
+              name.includes('mountain') || name.includes('mesh')) {
+            c.visible = false;
+          }
+        }
+      });
+      scene.add(land);
+      onLoaded();
+    }, undefined, () => onLoaded());
+
+    const gateConfigs = [
+      { x: -6, y: 0.2, z: -2, label: '关于我',   target: 'about.html',    labelId: 'label-0' },
+      { x:  0, y: 0.2, z: -4, label: '我的作品', target: 'works.html',    labelId: 'label-1' },
+      { x:  6, y: 0.2, z: -2, label: '我的技能', target: 'skills-panel',  labelId: 'label-2' },
+    ];
+    const gateObjects = [];
+    let gatesLoaded = 0;
+
+    gateConfigs.forEach((cfg, i) => {
+      loader.load('models/gate/scene.gltf', (gltf) => {
+        const gate = gltf.scene;
+        gate.scale.set(0.5, 0.5, 0.5);
+        gate.position.set(cfg.x, cfg.y, cfg.z);
+        gate.traverse(c => {
+          if (c.isMesh) {
+            c.castShadow = true;
+            c.material = c.material.clone();
+            c.material.emissive = new THREE.Color(0x88aaff);
+            c.material.emissiveIntensity = 0.15;
+          }
+        });
+        scene.add(gate);
+        gateObjects.push({ mesh: gate, cfg });
+        gatesLoaded++;
+        if (gatesLoaded === 1) onLoaded();
+      }, undefined, () => { if (gatesLoaded === 0) onLoaded(); });
+    });
+
+    let cotlMesh = null;
+    loader.load('models/cotl/scene.gltf', (gltf) => {
+      cotlMesh = gltf.scene;
+      cotlMesh.scale.set(0.8, 0.8, 0.8);
+      cotlMesh.position.set(8, 0, 2.5);
+      cotlMesh.traverse(c => {
+        if (c.isMesh) {
+          c.material = c.material.clone();
+          c.material.emissive = new THREE.Color(0x88aaff);
+          c.material.emissiveIntensity = 0.4;
+        }
+      });
+      scene.add(cotlMesh);
+      onLoaded();
+    }, undefined, () => onLoaded());
+
+    const pCount = 150;
+    const pPos = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount; i++) {
+      pPos[i*3]   = (Math.random()-0.5)*30;
+      pPos[i*3+1] = Math.random()*8 + 0.5;
+      pPos[i*3+2] = (Math.random()-0.5)*30;
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ color: 0xffdd88, size: 0.07, transparent: true, opacity: 0.75, sizeAttenuation: true });
+    scene.add(new THREE.Points(pGeo, pMat));
+
+    const idleFrames  = Array.from({length: 8}, (_,i) => `待机序列帧/ezgif-frame-00${i+1}.png`);
+    const rightFrames = Array.from({length: 7}, (_,i) => `向右走序列帧/ezgif-frame-00${i+1}.png`);
+    const leftFrames  = Array.from({length: 7}, (_,i) => `向左走序列帧/ezgif-frame-00${i+1}.png`);
+
+    const spriteEl = document.getElementById('character-sprite');
+    let currentAnim = 'idle';
+    let frameIndex = 0;
+    const FRAME_INTERVAL = 120;
+    function getFrames() {
+      if (currentAnim === 'right') return rightFrames;
+      if (currentAnim === 'left')  return leftFrames;
+      return idleFrames;
+    }
+
+    const charPos3D = new THREE.Vector3(0, 0.8, 6);
+    const SPEED = 0.06;
+    const TRIGGER_DIST = 3.5;
+    const keys = {};
+    document.addEventListener('keydown', e => keys[e.key] = true);
+    document.addEventListener('keyup',   e => keys[e.key] = false);
+
+    const charLabel  = document.getElementById('char-label');
+    const gateLabels = ['label-0','label-1','label-2'].map(id => document.getElementById(id));
+    const cotlLabel  = document.getElementById('label-cotl');
+
+    // 标签点击事件
+    gateLabels.forEach((el, idx) => {
+      if (!el) return;
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (triggered) return;
+        playClick();
+        const target = gateConfigs[idx].target;
+        if (target === 'skills-panel') {
+          triggered = true;
+          skillsPanel.classList.add('active');
+          setTimeout(() => triggered = false, 500);
+        } else {
+          navigateTo(target);
+        }
+      });
+    });
+
+    if (cotlLabel) {
+      cotlLabel.style.cursor = 'pointer';
+      cotlLabel.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playClick();
+        showContactPanel = true;
+        contactPanel.classList.add('active');
+      });
+    }
+
+    function worldToScreen(v3) {
+      const v = v3.clone().project(camera);
+      return {
+        x: (v.x * 0.5 + 0.5) * window.innerWidth,
+        y: (-v.y * 0.5 + 0.5) * window.innerHeight,
+      };
+    }
+    function setLabel(el, x, y, show) {
+      el.style.left = x + 'px';
+      el.style.top  = y + 'px';
+      el.style.display = show ? 'block' : 'none';
+    }
+
+    const overlay = document.getElementById('transition-overlay');
+    let triggered = false;
+
+    // 音效
+    const clickSound = new Audio('素材/click.mp3');
+    clickSound.volume = 0.6;
+    function playClick() {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(() => {});
+    }
+
+    function navigateTo(url) {
+      if (triggered) return;
+      triggered = true;
+      playClick();
+      overlay.classList.add('active');
+      setTimeout(() => window.location.href = url, 650);
+    }
+
+    // 联系我
+    const contactPanel = document.getElementById('contact-panel');
+    let showContactPanel = false;
+    document.getElementById('closeContact').addEventListener('click', (e) => {
+      e.stopPropagation();
+      playClick();
+      showContactPanel = false;
+      contactPanel.classList.remove('active');
+      setTimeout(() => triggered = false, 500);
+    });
+    contactPanel.addEventListener('click', e => e.stopPropagation());
+
+    // 技能面板
+    const skillsPanel = document.getElementById('skills-panel');
+    document.getElementById('closeSkills').addEventListener('click', () => {
+      playClick();
+      skillsPanel.classList.remove('active');
+      setTimeout(() => triggered = false, 500);
+    });
+    skillsPanel.addEventListener('click', e => {
+      if (e.target === skillsPanel) {
+        playClick();
+        skillsPanel.classList.remove('active');
+        setTimeout(() => triggered = false, 500);
+      }
+    });
+
+    // 射线点击检测
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    renderer.domElement.addEventListener('click', (e) => {
+      mouse.x =  (e.clientX / window.innerWidth)  * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+
+      if (cotlMesh) {
+        const hits = raycaster.intersectObject(cotlMesh, true);
+        if (hits.length > 0) {
+          playClick();
+          showContactPanel = true;
+          contactPanel.classList.add('active');
+          return;
+        }
+      }
+
+      const gateHits = raycaster.intersectObjects(gateObjects.map(g => g.mesh), true);
+      if (gateHits.length > 0 && !triggered) {
+        let obj = gateHits[0].object;
+        while (obj && !gateObjects.some(g => g.mesh === obj)) obj = obj.parent;
+        const gate = gateObjects.find(g => g.mesh === obj);
+        if (gate) {
+          playClick();
+          const target = gate.cfg.target;
+          if (target === 'skills-panel') {
+            triggered = true;
+            skillsPanel.classList.add('active');
+            setTimeout(() => triggered = false, 500);
+          } else {
+            navigateTo(target);
+          }
+        }
+      }
+    });
+
+    const clock = new THREE.Clock();
+    let lastFrame = performance.now();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      const now = performance.now();
+
+      if ((keys['a'] || keys['A'] || keys['ArrowLeft']) && !triggered) {
+        charPos3D.x -= SPEED;
+        if (currentAnim !== 'left') { currentAnim = 'left'; frameIndex = 0; }
+      } else if ((keys['d'] || keys['D'] || keys['ArrowRight']) && !triggered) {
+        charPos3D.x += SPEED;
+        if (currentAnim !== 'right') { currentAnim = 'right'; frameIndex = 0; }
+      } else {
+        if (currentAnim !== 'idle') { currentAnim = 'idle'; frameIndex = 0; }
+      }
+      charPos3D.x = Math.max(-10, Math.min(10, charPos3D.x));
+
+      if (now - lastFrame > FRAME_INTERVAL) {
+        const frames = getFrames();
+        frameIndex = (frameIndex + 1) % frames.length;
+        spriteEl.src = frames[frameIndex];
+        lastFrame = now;
+      }
+
+      const spriteScreen = worldToScreen(charPos3D);
+      spriteEl.style.left = spriteScreen.x + 'px';
+      spriteEl.style.top  = spriteScreen.y + 'px';
+
+      const labelPos = charPos3D.clone().add(new THREE.Vector3(0, 1.5, 0));
+      const ls = worldToScreen(labelPos);
+      charLabel.style.left = ls.x + 'px';
+      charLabel.style.top  = (ls.y - 20) + 'px';
+
+      const targetCamX = charPos3D.x * 0.35;
+      camera.position.x += (targetCamX - camera.position.x) * 0.04;
+
+      gateObjects.forEach((g, i) => {
+        const dist = charPos3D.distanceTo(g.mesh.position);
+        const gScreen = worldToScreen(g.mesh.position.clone().add(new THREE.Vector3(0, 2.5, 0)));
+        setLabel(gateLabels[i], gScreen.x, gScreen.y, dist < 15);
+
+        if (dist < TRIGGER_DIST && !triggered) {
+          const target = g.cfg.target;
+          if (target === 'skills-panel') {
+            triggered = true;
+            skillsPanel.classList.add('active');
+            setTimeout(() => triggered = false, 500);
+          } else {
+            navigateTo(target);
+          }
+        }
+
+        g.mesh.traverse(c => {
+          if (c.isMesh && c.material.emissive) {
+            c.material.emissiveIntensity = 0.2 + Math.sin(t * 2 + i) * 0.12;
+          }
+        });
+      });
+
+      if (cotlMesh) {
+        const dc = charPos3D.distanceTo(cotlMesh.position);
+        const cs = worldToScreen(cotlMesh.position.clone().add(new THREE.Vector3(0, 1.0, 0)));
+        setLabel(cotlLabel, cs.x, cs.y, dc < 6);
+
+        if (showContactPanel) {
+          const panelPos = worldToScreen(cotlMesh.position.clone().add(new THREE.Vector3(0, 3.5, 0)));
+          contactPanel.style.left = panelPos.x + 'px';
+          contactPanel.style.top  = panelPos.y + 'px';
+          contactPanel.style.transform = 'translate(-50%, -50%)';
+        }
+
+        cotlMesh.traverse(c => {
+          if (c.isMesh && c.material.emissive) {
+            c.material.emissiveIntensity = 0.3 + Math.sin(t * 1.8) * 0.2;
+          }
+        });
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 1s ease';
+    setTimeout(() => document.body.style.opacity = '1', 100);
+  </script>
+</body>
+</html>

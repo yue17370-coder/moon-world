@@ -1,0 +1,11 @@
+Model Information:
+* title:	Meditation Shrine 3D-Printable [Sky: CotL]
+* source:	https://sketchfab.com/3d-models/meditation-shrine-3d-printable-sky-cotl-cf68eaf1d0a14cb7a1484d6526db0f2e
+* author:	BlueBead (https://sketchfab.com/BlueBead)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Meditation Shrine 3D-Printable [Sky: CotL]" (https://sketchfab.com/3d-models/meditation-shrine-3d-printable-sky-cotl-cf68eaf1d0a14cb7a1484d6526db0f2e) by BlueBead (https://sketchfab.com/BlueBead) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

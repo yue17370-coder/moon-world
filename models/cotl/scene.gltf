@@ -1,0 +1,164 @@
+{
+  "accessors": [
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 37976,
+      "max": [
+        37.08488464355469,
+        27.34864616394043,
+        100.0820541381836
+      ],
+      "min": [
+        -40.92503356933594,
+        -26.299968719482422,
+        -0.0004859176988247782
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 455712,
+      "componentType": 5126,
+      "count": 37976,
+      "max": [
+        0.9999973773956299,
+        0.9999998807907104,
+        0.9999964833259583
+      ],
+      "min": [
+        -0.9999784231185913,
+        -0.999992847442627,
+        -1.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 223170,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "BlueBead (https://sketchfab.com/BlueBead)",
+      "license": "CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)",
+      "source": "https://sketchfab.com/3d-models/meditation-shrine-3d-printable-sky-cotl-cf68eaf1d0a14cb7a1484d6526db0f2e",
+      "title": "Meditation Shrine 3D-Printable [Sky: CotL]"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 892680,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 911424,
+      "byteOffset": 892680,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1804104,
+      "uri": "scene.bin"
+    }
+  ],
+  "extensionsRequired": [
+    "KHR_materials_pbrSpecularGlossiness"
+  ],
+  "extensionsUsed": [
+    "KHR_materials_pbrSpecularGlossiness"
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "extensions": {
+        "KHR_materials_pbrSpecularGlossiness": {
+          "diffuseFactor": [
+            0.20863687014525575,
+            0.2704977910130658,
+            0.31854677812509186,
+            1.0
+          ],
+          "glossinessFactor": 0.7,
+          "specularFactor": [
+            0.20863687014525575,
+            0.2704977910130658,
+            0.31854677812509186
+          ]
+        }
+      },
+      "name": "Scene_-_Root"
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "indices": 2,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        0.021162228658795357,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.69895870187539e-18,
+        -0.021162228658795357,
+        0.0,
+        0.0,
+        0.021162228658795357,
+        4.69895870187539e-18,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "SkyCotL-Meditation-Shrine.stl.cleaner.materialmerger.gles"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_2"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}
