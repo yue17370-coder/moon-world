@@ -439,9 +439,9 @@
     const pMat = new THREE.PointsMaterial({ color: 0xffdd88, size: 0.07, transparent: true, opacity: 0.75, sizeAttenuation: true });
     scene.add(new THREE.Points(pGeo, pMat));
 
-    const idleFrames  = Array.from({length: 8}, (_,i) => `idle/ezgif-frame-00${i+1}.png`);
-    const rightFrames = Array.from({length: 7}, (_,i) => `walk_right/ezgif-frame-00${i+1}.png`);
-    const leftFrames  = Array.from({length: 7}, (_,i) => `walk_left/ezgif-frame-00${i+1}.png`);
+    const idleFrames  = Array.from({length: 8}, (_,i) => `待机序列帧/ezgif-frame-00${i+1}.png`);
+    const rightFrames = Array.from({length: 7}, (_,i) => `向右走序列帧/ezgif-frame-00${i+1}.png`);
+    const leftFrames  = Array.from({length: 7}, (_,i) => `向左走序列帧/ezgif-frame-00${i+1}.png`);
 
     const spriteEl = document.getElementById('character-sprite');
     let currentAnim = 'idle';
@@ -471,7 +471,6 @@
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         if (triggered) return;
-        playClick();
         const target = gateConfigs[idx].target;
         if (target === 'skills-panel') {
           triggered = true;
@@ -487,7 +486,6 @@
       cotlLabel.style.cursor = 'pointer';
       cotlLabel.addEventListener('click', (e) => {
         e.stopPropagation();
-        playClick();
         showContactPanel = true;
         contactPanel.classList.add('active');
       });
