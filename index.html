@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Moon's World</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -24,6 +24,10 @@
     <video id="introVideo" playsinline>
       <source src="素材/入场动画.mp4" type="video/mp4">
     </video>
+    <!-- 跳过动画按钮 -->
+    <button id="skip-btn" title="跳过入场动画">
+      跳过动画 <span class="skip-arrow">»</span>
+    </button>
     <!-- 点击热区（视频结束后出现） -->
     <div id="hotspot" title="进入">
       <div class="hotspot-ring"></div>
@@ -34,6 +38,6 @@
   <!-- 过渡光晕 -->
   <div id="transition-overlay"></div>
 
-  <script src="index.js"></script>
+  <script src="index.js?v=3"></script>
 </body>
 </html>
